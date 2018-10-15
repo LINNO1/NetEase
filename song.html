@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+ <script src="/node_modules/leancloud-storage/dist/av-min.js "></script>
+ <script src="/init-av-min.js "></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>旋转的光盘</title>
+   <style type="text/css">
+     * { 
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+       }
+
+      *::before, *::after {
+        box-sizing: border-box;
+      }
+
+      @keyframes circle {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      
+      .disc-container {
+        position: relative;
+      }
+      .page {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        /*background: transparent url(https://p1.music.126.net/JJWULdViIZ2nA3fdhlvPBA==/109951162946579894.webp?imageView&thumbnail=72y720&quality=75&tostatic=0&type=webp) no-repeat center; */
+        background-size: cover;
+        
+      }
+
+
+
+/*用一张图加 模糊和暗 来背景  但是 jquery CSS 替换 before 的背景一直不成功*/
+/*https://www.w3cplus.com/css3/ten-effects-with-css3-filter*/
+     /* .page::before {
+        content: '';
+        position: absolute;
+        top:0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: -1;
+        background: transparent url(https://p1.music.126.net/JJWULdViIZ2nA3fdhlvPBA==/109951162946579894.webp?imageView&thumbnail=720y720&quality=75&tostatic=0&type=webp) no-repeat center; 
+        
+        -webkit-filter: blur(3px) brightness(.8);
+        background-size: cover;
+      }*/
+  
+       .disc-container .disc {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         margin-top: 16vw;
+       }
+      .disc-container .pointer {
+        width: 24vw;
+        position: absolute;
+        left: 45%;
+      }
+
+      .disc-container .ring {
+        width: 72vw;
+       
+      }
+
+      .disc-container .light {
+        width: 72vw;
+         position: absolute;
+          animation: circle 20s infinite linear;
+          animation-play-state: paused;
+       
+      }
+      .disc-container .cover {
+        width: 45.5vw;
+        position: absolute;
+        border-radius: 50%;
+        animation: circle 20s infinite linear;
+        animation-play-state: paused;
+        
+      }
+
+      .disc-container.playing .light,
+      .disc-container.playing .cover {
+         animation-play-state: running;  /*使动画停顿不会突变*/
+      }
+
+      .disc-container .icon-wrap {
+        position: absolute;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        border-radius: 50%;
+        border: 1px solid white;
+        height: 20vw;
+        width: 20vw;
+        background-color: rgba(0,0,0,0.5);
+      }
+      .disc-container .icon {
+        width: 10vw;
+        fill: white;
+      }
+      .disc-container .icon-pause {
+        display: none;
+      }
+      .disc-container.playing .icon-pause {
+        display: block;
+      }
+      .disc-container.playing .icon-play {
+        display: none;
+      }
+
+
+
+
+      .song-description {
+        flex-grow: 1;
+        color: #AEABAC;
+        padding: 0 35px;
+        margin-top: 25px;
+        text-align: center;
+        line-height: 2;
+
+      }
+      .song-description h1 {
+        color: white;
+        font-size: 18px;
+      }
+      .song-description p {
+        height: 24px;
+        font-size: 16px;
+      }
+
+      .song-description p.active {
+        color: white;
+      }
+      .song-description .lyric{
+        height: 72px;
+        overflow: hidden;
+      }
+      .song-description .lines{
+        transition: transform 0.3s;
+      }
+
+
+
+
+      .page .links {
+        display: flex;
+        justify-content: center;
+        text-align: center;
+      }
+      .page .links a {
+       color: #D43B32;
+       width: 38.5vw;
+       margin: 1em;
+       text-align: center;
+       letter-spacing: 1vm;
+       border: 1px #D43B32 solid;
+       background: transparent;
+       border-radius: 1.5vw;
+       padding: 1.5vw;
+       text-decoration: none;
+
+      }
+
+      .page .links a.main {
+       color: white;
+       background-color: #D43B32;
+
+      }
+   </style>
+</head>
+<body>
+  <div class="page">
+      <div class="disc-container">
+
+       
+        <img class='pointer' src="https://s3.music.126.net/m/s/img/needle-ip6.png?be4ebbeb6befadfcae75ce174e7db862">
+        <div class="disc">
+           <div class="icon-wrap">
+            <svg class="icon icon-play" >
+               <use xlink:href="#icon-play"></use>
+            </svg>
+            <svg class="icon icon-pause" >
+                <use xlink:href="#icon-music-icon_pause"></use>
+            </svg>
+        </div>
+          <img class='ring' src="https://s3.music.126.net/m/s/img/disc-ip6.png?69796123ad7cfe95781ea38aac8f2d48">
+          <img class='light' src="https://s3.music.126.net/m/s/img/disc_light-ip6.png?996fc8a2bc62e1ab3f51f135fc459577">
+          <img class='cover' src="https://p1.music.126.net/JJWULdViIZ2nA3fdhlvPBA==/109951162946579894.webp?imageView&thumbnail=720y720&quality=75&tostatic=0&type=webp">
+
+        
+        </div>
+
+     <!--   https://p4.music.126.net/i3dkjDMl9zdF6o045SL9Kw==/18217808161173148.jpg -->
+        <div class="song-description">
+          <h1></h1>
+          <div class="lyric">
+            <div class="lines">
+             <!--  <p>歌词1</p>
+              <p>歌词1</p>
+              <p>歌词1</p>
+              <p>歌词1</p>
+              <p>歌词1</p>
+              <p>歌词1</p>
+              <p>歌词1</p>
+              <p>歌词1</p>
+              <p>歌词1</p>
+              <p>歌词1</p>
+               <p>歌词1</p> -->
+            </div>
+          </div>
+          
+        </div>
+        <div class="links">
+          <a href="#">打开</a>
+          <a href="#" class="main">下载</a>
+        </div>
+      </div>
+  </div>
+  <script src='/song.js'></script>
+ <!--  <script type="text/javascript">
+    $.get('/lyric1.json').then(
+    function(object){
+      let lyric = object.lrc.lyric;
+      let array = lyric.split('\n');
+      let regex = /^\[(.+)\](.*)/;
+      array = array.map(
+        function(string){
+          let matches = string.match(regex)
+          if(matches){
+            return {
+              time: matches[1],
+              words: matches[2]
+            }
+          }
+        })
+      let $lyric = $('.lyric');
+      // console.log(array);
+      array.map(function(object){
+        let $p=$('<p>')
+      /*   console.log('11111111');
+        console.log(object);*/
+        $p.attr('data-time', object.time)
+         $p.text(object.words);
+        $p.appendTo($lyric.children('.lines'))
+      })
+ })
+    let audio = document.createElement('audio');
+    audio.src = 'http://m10.music.126.net/20180918115022/13d347788416438a3458c5b594fbeeb6/ymusic/6701/2534/17ee/07333d6705ea12e7f32c0dc63402e519.mp3';
+    audio.oncanplay = function(){
+      audio.play();
+      $('.disc-container').addClass('playing');
+    }
+
+    $('.icon-pause').on('click',function(){
+      audio.pause();
+       $('.disc-container').removeClass('playing');
+    })
+    $('.icon-play').on('click',function(){
+      audio.play();
+       $('.disc-container').addClass('playing');
+    })
+  </script> -->
+  <script src='//at.alicdn.com/t/font_842047_qjqptm55k1.js'></script>
+
+</body>
+</html>
